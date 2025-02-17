@@ -25,7 +25,7 @@ namespace nts
         AComponent(std::string name, std::size_t inputpins, std::size_t outputpins) : _name(name), _inputpins(inputpins), _outputpins(outputpins) {};
         ~AComponent() = default;
 
-        virtual int compute(std::size_t pin) = 0;
+        Tristate compute(std::size_t pin) = 0;
         void simulate() {};
 
         void setLink(std::size_t pin, IComponent &other, std::size_t otherPin) override {
