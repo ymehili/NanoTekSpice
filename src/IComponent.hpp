@@ -12,20 +12,22 @@
 
 namespace nts
 {
+    enum class Tristate
+    {
+        UNDEFINED = -1,
+        FALSE = 0,
+        TRUE = 1
+    };
+
     class IComponent
     {
     public:
-        enum Tristate
-        {
-            UNDEFINED = (-true),
-            TRUE = true,
-            FALSE = false
-        };
         virtual ~IComponent() = default;
 
-        virtual Tristate compute(std::size_t pin) = 0;
+        virtual Tristate compute(std::size_t pin = 1) = 0;
         virtual void setLink(std::size_t pin, IComponent &other, std::size_t otherPin) = 0;
         virtual void simulate() = 0;
+        virtual Tristate getValue() = 0;
     };
 }
 

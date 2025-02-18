@@ -8,18 +8,21 @@
 #ifndef OUTPUTCOMPONENT_HPP_
 #define OUTPUTCOMPONENT_HPP_
 
-#include "AComponent.hpp"
+#include "../AComponent.hpp"
 
 namespace nts
 {
     class OutputComponent : public nts::AComponent
     {
     public:
-        OutputComponent() = default;
+        OutputComponent() : AComponent("input", 1) {}
         ~OutputComponent() = default;
 
-        int compute(std::size_t pin) {
-            return 0;
+        Tristate compute()
+        {
+            if (_links[pin] == nullptr)
+                return UNDEFINED;
+            return getLink(pin);
         }
     };
 }

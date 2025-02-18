@@ -8,17 +8,19 @@
 #ifndef FALSECOMPONENT_HPP_
 #define FALSECOMPONENT_HPP_
 
-#include "AComponent.hpp"
+#include "../AComponent.hpp"
 
 namespace nts
 {
     class FalseComponent : public nts::AComponent
     {
     public:
-        FalseComponent();
-        ~FalseComponent();
+        FalseComponent(): AComponent("false", 1) {};
+        ~FalseComponent() = default;
 
-        int compute(std::size_t pin);
+        Tristate compute() {
+            return Tristate::FALSE;
+        }
     };
 }
 
