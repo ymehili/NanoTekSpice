@@ -14,13 +14,20 @@ namespace nts
 {
     class OutputComponent : public nts::AComponent
     {
+    private:
+        Tristate _value;
+
     public:
-        OutputComponent() : AComponent("input", 1) {}
+        OutputComponent() : AComponent("output", 1), _value(Tristate::Undefined) {}
         ~OutputComponent() = default;
 
-        Tristate compute()
+        Tristate compute(std::size_t pin = 1)
         {
-            
+            if (pin != 1)
+                return Tristate::Undefined;
+            if (_links[0].first)
+                _value = _links[0].first->compute(_links[0].second);
+            return _value;
         }
     };
 }
