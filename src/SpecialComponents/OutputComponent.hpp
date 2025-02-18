@@ -20,9 +20,7 @@ namespace nts
 
         Tristate compute()
         {
-            if (_links[pin] == nullptr)
-                return UNDEFINED;
-            return getLink(pin);
+            
         }
     };
 }

@@ -19,7 +19,7 @@ namespace nts
         ~TrueComponent() = default;
 
         Tristate compute() {
-            return Tristate::TRUE;
+            return Tristate::True;
         }
     };
 }
