@@ -23,7 +23,7 @@ namespace nts
 
     public:
         AComponent::AComponent(const std::string &name, std::size_t nbpins)
-            : _name(name), _nbpins(nbpins), _value(Tristate::UNDEFINED)
+            : _name(name), _nbpins(nbpins), _value(Tristate::Undefined)
         {
             for (std::size_t i = 0; i < nbpins; ++i)
             {

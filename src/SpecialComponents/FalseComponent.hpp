@@ -19,7 +19,7 @@ namespace nts
         ~FalseComponent() = default;
 
         Tristate compute() {
-            return Tristate::FALSE;
+            return Tristate::False;
         }
     };
 }

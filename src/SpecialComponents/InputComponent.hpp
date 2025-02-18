@@ -5,7 +5,7 @@
 ** InputComponent
 */
 
-#ifndef INPUTCOMPONENT_HPP_ 
+#ifndef INPUTCOMPONENT_HPP_
 #define INPUTCOMPONENT_HPP_
 
 #include "../AComponent.hpp"
@@ -15,9 +15,10 @@ namespace nts
     class InputComponent : public nts::AComponent
     {
     private:
-        Tristate _value = UNDEFINED;
+        Tristate _value;
+
     public:
-        InputComponent() : AComponent("input", 1) {}
+        InputComponent() : AComponent("input", 1), _value(Tristate::Undefined) {}
         ~InputComponent() = default;
 
         void setValue(Tristate value)
@@ -25,8 +26,10 @@ namespace nts
             _value = value;
         }
 
-        Tristate compute()
+        Tristate compute(std::size_t pin = 1)
         {
+            if (pin != 1)
+                return Tristate::Undefined;
             return _value;
         }
     };
