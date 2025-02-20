@@ -15,10 +15,11 @@ namespace nts
     class FalseComponent : public nts::AComponent
     {
     public:
-        FalseComponent(): AComponent("false", 1) {};
+        FalseComponent(): AComponent(1) {};
         ~FalseComponent() = default;
 
-        Tristate compute() {
+        Tristate compute(std::size_t pin = 1){
+            (void)pin;
             return Tristate::False;
         }
     };
