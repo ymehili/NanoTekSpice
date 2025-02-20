@@ -13,7 +13,7 @@
 namespace nts {
     class AndComponent : public AComponent {
         public:
-            AndComponent() : AComponent("and", 2) {}
+            AndComponent() : AComponent(2) {}
             ~AndComponent() = default;
 
             Tristate compute(std::size_t pin = 3) {

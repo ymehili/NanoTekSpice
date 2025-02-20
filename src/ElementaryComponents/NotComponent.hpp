@@ -13,7 +13,7 @@
 namespace nts {
     class NotComponent : public AComponent {
         public:
-            NotComponent() : AComponent("not", 2) {}
+            NotComponent() : AComponent(2) {}
             ~NotComponent() = default;
 
             Tristate compute(std::size_t pin = 2) override {

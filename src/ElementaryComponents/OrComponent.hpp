@@ -13,7 +13,7 @@
 namespace nts {
     class OrComponent : public AComponent {
         public:
-            OrComponent() : AComponent("or", 3) {}
+            OrComponent() : AComponent(3) {}
             ~OrComponent() = default;
 
             Tristate compute(std::size_t pin = 3) {

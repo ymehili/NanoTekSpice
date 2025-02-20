@@ -18,7 +18,7 @@ namespace nts
         Tristate _value;
 
     public:
-        OutputComponent() : AComponent("output", 1), _value(Tristate::Undefined) {}
+        OutputComponent() : AComponent(1), _value(Tristate::Undefined) {}
         ~OutputComponent() = default;
 
         Tristate compute(std::size_t pin = 1)

@@ -13,7 +13,7 @@
 namespace nts {
     class XorComponent : public AComponent {
         public:
-            XorComponent() : AComponent("xor", 3) {}
+            XorComponent() : AComponent(3) {}
             ~XorComponent() = default;
 
             Tristate compute(std::size_t pin = 3) {

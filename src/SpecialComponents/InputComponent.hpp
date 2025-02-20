@@ -18,7 +18,7 @@ namespace nts
         Tristate _value;
 
     public:
-        InputComponent() : AComponent("input", 1), _value(Tristate::Undefined) {}
+        InputComponent() : AComponent(1), _value(Tristate::Undefined) {}
         ~InputComponent() = default;
 
         void setValue(Tristate value)
