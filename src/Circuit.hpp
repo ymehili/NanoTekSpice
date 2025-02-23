@@ -12,26 +12,32 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <memory> // Add for shared_ptr
 #include "IComponent.hpp"
 #include "SpecialComponents/include.hpp"
 #include "ElementaryComponents/include.hpp"
+#include "GatesComponents/include.hpp"
 
 class Circuit {
     public:
         Circuit() {
-            factories["input"] = []() { return std::make_unique<nts::InputComponent>(); };
-            factories["output"] = []() { return std::make_unique<nts::OutputComponent>(); };
-            factories["true"] = []() { return std::make_unique<nts::TrueComponent>(); };
-            factories["false"] = []() { return std::make_unique<nts::FalseComponent>(); };
-            factories["clock"] = []() { return std::make_unique<nts::ClockComponent>(); };
+            factories["input"] = []() { return std::make_shared<nts::InputComponent>(); };
+            factories["output"] = []() { return std::make_shared<nts::OutputComponent>(); };
+            factories["true"] = []() { return std::make_shared<nts::TrueComponent>(); };
+            factories["false"] = []() { return std::make_shared<nts::FalseComponent>(); };
+            factories["clock"] = []() { return std::make_shared<nts::ClockComponent>(); };
 
-            factories["and"] = []() { return std::make_unique<nts::AndComponent>(); };
-            factories["or"] = []() { return std::make_unique<nts::OrComponent>(); };
-            factories["xor"] = []() { return std::make_unique<nts::XorComponent>(); };
-            factories["not"] = []() { return std::make_unique<nts::NotComponent>(); };
+            factories["and"] = []() { return std::make_shared<nts::AndComponent>(); };
+            factories["or"] = []() { return std::make_shared<nts::OrComponent>(); };
+            factories["xor"] = []() { return std::make_shared<nts::XorComponent>(); };
+            factories["not"] = []() { return std::make_shared<nts::NotComponent>(); };
+
+            factories["4001"] = []() { return std::make_shared<nts::C4001>(); };
+            factories["4030"] = []() { return std::make_shared<nts::C4030>(); };
+            factories["4071"] = []() { return std::make_shared<nts::C4071>(); };
         }
 
-        std::unique_ptr<nts::IComponent>& createComponent(const std::string& name, const std::string& type) {
+        std::shared_ptr<nts::IComponent>& createComponent(const std::string& name, const std::string& type) {
             auto it = factories.find(type);
             if (it == factories.end())
                 throw std::invalid_argument("Unknown component type: " + type);
@@ -43,7 +49,7 @@ class Circuit {
             return components[name];
         }
 
-        std::unique_ptr<nts::IComponent>& getComponent(const std::string& name) {
+        std::shared_ptr<nts::IComponent>& getComponent(const std::string& name) {
             auto it = components.find(name);
             if (it == components.end())
                 throw std::invalid_argument("Component not found: " + name);
@@ -54,6 +60,7 @@ class Circuit {
             auto& comp1 = getComponent(name1);
             auto& comp2 = getComponent(name2);
             comp1->setLink(pin1, *comp2, pin2);
+            comp2->setLink(pin2, *comp1, pin1);
         }
 
         void setInputValue(std::string name, int value) {
@@ -103,8 +110,8 @@ class Circuit {
         void start();
 
     private:
-        std::map<std::string, std::function<std::unique_ptr<nts::IComponent>()>> factories;
-        std::map<std::string, std::unique_ptr<nts::IComponent>> components;
+        std::map<std::string, std::function<std::shared_ptr<nts::IComponent>()>> factories;
+        std::map<std::string, std::shared_ptr<nts::IComponent>> components;
         std::vector<std::string> _buffer;
 };
 
