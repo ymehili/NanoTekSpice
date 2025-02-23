@@ -10,6 +10,8 @@
 
 #include <map>
 #include <string>
+#include <vector>
+#include <sstream>
 #include "IComponent.hpp"
 #include "SpecialComponents/include.hpp"
 #include "ElementaryComponents/include.hpp"
@@ -21,7 +23,7 @@ class Circuit {
             factories["output"] = []() { return std::make_unique<nts::OutputComponent>(); };
             factories["true"] = []() { return std::make_unique<nts::TrueComponent>(); };
             factories["false"] = []() { return std::make_unique<nts::FalseComponent>(); };
-            // factories["clock"] = []() { return std::make_unique<nts::ClockComponent>(); };
+            factories["clock"] = []() { return std::make_unique<nts::ClockComponent>(); };
 
             factories["and"] = []() { return std::make_unique<nts::AndComponent>(); };
             factories["or"] = []() { return std::make_unique<nts::OrComponent>(); };
@@ -54,18 +56,56 @@ class Circuit {
             comp1->setLink(pin1, *comp2, pin2);
         }
 
+        void setInputValue(std::string name, int value) {
+            auto* inputComponent = dynamic_cast<nts::InputComponent*>(getComponent(name).get());
+            if (!inputComponent)
+                throw std::invalid_argument("Component is not an input: " + name);
+            if (value == 0)
+                inputComponent->setValue(nts::Tristate::False);
+            else if (value == 1)
+                inputComponent->setValue(nts::Tristate::True);
+            else
+                throw std::invalid_argument("Invalid input value: " + std::to_string(value));
+        }
+
         void simulate() {
+            for (auto &command : _buffer) {
+                std::istringstream iss(command);
+                std::string cmd;
+                iss >> cmd;
+
+                std::string name;
+                std::string value;
+                size_t pos = command.find('=');
+                if (pos != std::string::npos) {
+                    std::string name = command.substr(0, pos);
+                    std::string value = command.substr(pos + 1);
+                }
+                auto* inputComponent = dynamic_cast<nts::InputComponent*>(getComponent(name).get());
+                if (inputComponent)
+                    inputComponent->setValue(value == "1" ? nts::Tristate::True : nts::Tristate::False);
+                else{
+                    auto* clockComponent = dynamic_cast<nts::ClockComponent*>(getComponent(name).get());
+                    if (clockComponent)
+                        clockComponent->setValue(value == "1" ? nts::Tristate::True : nts::Tristate::False);
+                }
+            }
+            for (auto& pair : components) {
+                auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
+                if (clockComponent)
+                    clockComponent->simulate();
+            }
         }
 
         void display() {
         }
 
-        void setInputValue(std::string, int value) {
-        }
+        void start();
 
     private:
         std::map<std::string, std::function<std::unique_ptr<nts::IComponent>()>> factories;
         std::map<std::string, std::unique_ptr<nts::IComponent>> components;
+        std::vector<std::string> _buffer;
 };
 
 #endif /* !CIRCUIT_HPP_ */

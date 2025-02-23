@@ -1,2 +1,4 @@
 NTS
 .vscode/settings.json
+*.o
+main

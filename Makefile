@@ -1,20 +1,29 @@
+##
+## EPITECH PROJECT, 2025
+## B-OOP-400-LYN-4-1-tekspice-spencer.pay
+## File description:
+## Makefile
+##
+
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17
 SRC_DIR = src
-SRC_FILES = $(wildcard $(SRC_DIR)/**/*.cpp) main.cpp
-OBJ_FILES = $(SRC_FILES:.cpp=.o)
-TARGET = main
+SRC_FILES = $(shell find $(SRC_DIR) -name "*.cpp") main.cpp
+OBJ_DIR = .obj
+OBJ_FILES = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.cpp=.o))
+TARGET = nanotekspice
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ_FILES)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
-%.o: %.cpp
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ_FILES)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -f $(TARGET)
