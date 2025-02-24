@@ -68,7 +68,7 @@ class Circuit {
         void setInputValue(std::string name, int value) {
             auto* inputComponent = dynamic_cast<nts::InputComponent*>(getComponent(name).get());
             if (!inputComponent)
-                throw std::invalid_argument("Component is not an input: " + name);
+                return;
             if (value == 0)
                 inputComponent->setValue(nts::Tristate::False);
             else if (value == 1)
@@ -78,6 +78,11 @@ class Circuit {
         }
 
         void simulate() {
+            for (auto& pair : components) {
+                auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
+                if (clockComponent)
+                    clockComponent->simulate();
+            }
             for (auto &command : _buffer) {
                 std::istringstream iss(command);
                 std::string cmd;
@@ -99,25 +104,47 @@ class Circuit {
                         clockComponent->setValue(value == "1" ? nts::Tristate::True : nts::Tristate::False);
                 }
             }
-            for (auto& pair : components) {
-                auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
-                if (clockComponent)
-                    clockComponent->simulate();
-            }
+            _buffer.clear();
         }
 
         void display() {
+            std::cout << "input:" << std::endl;
+            for (const auto& pair : components) {
+                auto* inputComponent = dynamic_cast<nts::InputComponent*>(pair.second.get());
+                if (inputComponent) {
+                    std::cout << pair.first << "=";
+                    if (inputComponent->compute() == nts::Tristate::True)
+                        std::cout << "1";
+                    else if (inputComponent->compute() == nts::Tristate::False)
+                        std::cout << "0";
+                    else
+                        std::cout << "U";
+                    std::cout << std::endl;
+                }
+                auto *clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
+                if (clockComponent) {
+                    std::cout << pair.first << "=";
+                    if (clockComponent->compute() == nts::Tristate::True)
+                        std::cout << "1";
+                    else if (clockComponent->compute() == nts::Tristate::False)
+                        std::cout << "0";
+                    else
+                        std::cout << "U";
+                    std::cout << std::endl;
+                }
+            }
+            std::cout << "output:" << std::endl;
             for (const auto& pair : components) {
                 auto* outputComponent = dynamic_cast<nts::OutputComponent*>(pair.second.get());
                 if (outputComponent) {
                     nts::Tristate value = pair.second->compute(1);
                     std::cout << pair.first << "=";
                     if (value == nts::Tristate::True)
-                        std::cout << "TRUE";
+                        std::cout << "1";
                     else if (value == nts::Tristate::False)
-                        std::cout << "FALSE";
+                        std::cout << "0";
                     else
-                        std::cout << "UNDEFINED";
+                        std::cout << "U";
                     std::cout << std::endl;
                 }
             }
