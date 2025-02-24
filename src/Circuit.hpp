@@ -105,14 +105,16 @@ class Circuit {
                 }
             }
             _buffer.clear();
+            _tick++;
         }
 
         void display() {
-            std::cout << "input:" << std::endl;
+            std::cout << "tick: " << _tick << std::endl;
+            std::cout << "input(s):" << std::endl;
             for (const auto& pair : components) {
                 auto* inputComponent = dynamic_cast<nts::InputComponent*>(pair.second.get());
                 if (inputComponent) {
-                    std::cout << pair.first << "=";
+                    std::cout << "\t" << pair.first << ": ";
                     if (inputComponent->compute() == nts::Tristate::True)
                         std::cout << "1";
                     else if (inputComponent->compute() == nts::Tristate::False)
@@ -123,7 +125,7 @@ class Circuit {
                 }
                 auto *clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
                 if (clockComponent) {
-                    std::cout << pair.first << "=";
+                    std::cout << "\t" << pair.first << ": ";
                     if (clockComponent->compute() == nts::Tristate::True)
                         std::cout << "1";
                     else if (clockComponent->compute() == nts::Tristate::False)
@@ -133,12 +135,12 @@ class Circuit {
                     std::cout << std::endl;
                 }
             }
-            std::cout << "output:" << std::endl;
+            std::cout << "output(s):" << std::endl;
             for (const auto& pair : components) {
                 auto* outputComponent = dynamic_cast<nts::OutputComponent*>(pair.second.get());
                 if (outputComponent) {
                     nts::Tristate value = pair.second->compute(1);
-                    std::cout << pair.first << "=";
+                    std::cout << "\t" << pair.first << ": ";
                     if (value == nts::Tristate::True)
                         std::cout << "1";
                     else if (value == nts::Tristate::False)
@@ -156,6 +158,7 @@ class Circuit {
         std::map<std::string, std::function<std::shared_ptr<nts::IComponent>()>> factories;
         std::map<std::string, std::shared_ptr<nts::IComponent>> components;
         std::vector<std::string> _buffer;
+        std::size_t _tick;
 };
 
 #endif /* !CIRCUIT_HPP_ */
