@@ -24,16 +24,20 @@ std::vector<Token> Parser::tokenize(std::ifstream& file)
 
     while (std::getline(file, line)) {
         lineNumber++;
+        bool addNewline = true;
+
         for (size_t i = 0; i < line.size(); ++i) {
             char c = line[i];
             if (c == ' ' || c == '\t')
                 continue;
             else if (c == '#') {
                 tokens.push_back({NEWLINE, "\n", lineNumber});
+                addNewline = false;
                 break;
             }
             else if (c == '.') {
                 std::string keyword;
+                i++;
                 while (i < line.size() && std::isalpha(line[i])) {
                     keyword += line[i];
                     i++;
@@ -43,7 +47,7 @@ std::vector<Token> Parser::tokenize(std::ifstream& file)
                 else if (keyword == "links")
                     tokens.push_back({DOTLINKS, keyword, lineNumber});
                 else
-                    std::cerr << "Error: Unexpected keyword at line " << lineNumber << std::endl;
+                    std::cerr << "Error: Unexpected keyword at line " << lineNumber << " : " << keyword << std::endl;
             }
             else if (std::isalpha(c) || std::isdigit(c)) {
                 std::string identifier;
@@ -59,12 +63,13 @@ std::vector<Token> Parser::tokenize(std::ifstream& file)
             }
             else if (c == ':')
                 tokens.push_back({COLON, ":", lineNumber});
-            else if (c == '\n')
-                tokens.push_back({NEWLINE, "\n", lineNumber});
             else if (c == EOF)
                 tokens.push_back({END, "EOF", lineNumber});
-            else
+            else if (c != '\n')
                 std::cerr << "Error: Unexpected character at line " << lineNumber << std::endl;
+        }
+        if (addNewline && !line.empty()) {
+            tokens.push_back({NEWLINE, "\n", lineNumber});
         }
     }
     tokens.push_back({END, "EOF", lineNumber});
@@ -75,10 +80,12 @@ void Parser::parse(Circuit& circuit)
 {
     std::size_t i = 0;
 
-    if (tokens[i].type != DOTCHIPSETS)
+    if (tokens[i].type != DOTCHIPSETS && tokens[i++].type != NEWLINE)
         throw std::runtime_error("Error: Expected .chipsets");
 
-    for (i = 1; i < tokens.size() && tokens[i].type != DOTLINKS; i++) {
+    i++;
+
+    for (i = 2; i < tokens.size() && tokens[i + 1].type != DOTLINKS; i++) {
         if (tokens[i].type == STRING || tokens[i].type == INTEGER) {
             std::string type = tokens[i].value;
             i++;
@@ -92,12 +99,18 @@ void Parser::parse(Circuit& circuit)
 
             circuit.createComponent(type, name);
         }
+        else if (tokens[i].type == DOTLINKS)
+            break;
+        else if (tokens[i].type == NEWLINE)
+            continue;
         else
             throw std::runtime_error("Error: Expected component type at line " + std::to_string(tokens[i].line));
     }
 
-    if (tokens[i].type != DOTLINKS)
+    if (tokens[i].type != DOTLINKS && tokens[i++].type != NEWLINE)
         throw std::runtime_error("Error: Expected .links");
+
+    i++;
 
     for (i++; i < tokens.size() && tokens[i].type != END; i++) {
         if (tokens[i].type == STRING) {
@@ -131,7 +144,8 @@ void Parser::parse(Circuit& circuit)
                 throw std::runtime_error("Error: Expected newline at line " + std::to_string(tokens[i].line));
 
             circuit.connect(name1, std::stoi(pin1), name2, std::stoi(pin2));
-        }
+        } else if (tokens[i].type == NEWLINE)
+            continue;
         else
             throw std::runtime_error("Error: Expected component name at line " + std::to_string(tokens[i].line));
     }

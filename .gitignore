@@ -2,3 +2,7 @@ NTS
 .vscode/settings.json
 *.o
 main
+test
+nanotekspice
+.vscode/launch.json
+.vscode/tasks.json
