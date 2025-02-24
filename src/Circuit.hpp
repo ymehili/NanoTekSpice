@@ -12,7 +12,9 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <memory> // Add for shared_ptr
+#include <memory>
+#include <functional>
+#include <iostream>
 #include "IComponent.hpp"
 #include "SpecialComponents/include.hpp"
 #include "ElementaryComponents/include.hpp"
@@ -105,6 +107,20 @@ class Circuit {
         }
 
         void display() {
+            for (const auto& pair : components) {
+                auto* outputComponent = dynamic_cast<nts::OutputComponent*>(pair.second.get());
+                if (outputComponent) {
+                    nts::Tristate value = pair.second->compute(1);
+                    std::cout << pair.first << "=";
+                    if (value == nts::Tristate::True)
+                        std::cout << "TRUE";
+                    else if (value == nts::Tristate::False)
+                        std::cout << "FALSE";
+                    else
+                        std::cout << "UNDEFINED";
+                    std::cout << std::endl;
+                }
+            }
         }
 
         void start();
