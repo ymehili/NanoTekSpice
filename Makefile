@@ -6,7 +6,7 @@
 ##
 
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17
+CXXFLAGS = -Wall -Wextra -std=c++17 -g3
 SRC_DIR = src
 SRC_FILES = $(shell find $(SRC_DIR) -name "*.cpp") main.cpp
 OBJ_DIR = .obj

@@ -37,7 +37,7 @@ class Circuit {
             factories["4071"] = []() { return std::make_shared<nts::C4071>(); };
         }
 
-        std::shared_ptr<nts::IComponent>& createComponent(const std::string& name, const std::string& type) {
+        std::shared_ptr<nts::IComponent>& createComponent(const std::string& type, const std::string& name) {
             auto it = factories.find(type);
             if (it == factories.end())
                 throw std::invalid_argument("Unknown component type: " + type);
@@ -85,8 +85,8 @@ class Circuit {
                 std::string value;
                 size_t pos = command.find('=');
                 if (pos != std::string::npos) {
-                    std::string name = command.substr(0, pos);
-                    std::string value = command.substr(pos + 1);
+                    name = command.substr(0, pos);
+                    value = command.substr(pos + 1);
                 }
                 auto* inputComponent = dynamic_cast<nts::InputComponent*>(getComponent(name).get());
                 if (inputComponent)

@@ -8,6 +8,8 @@
 #ifndef CLOCKCOMPONENT_HPP_
 #define CLOCKCOMPONENT_HPP_
 
+#include "../AComponent.hpp"
+
 namespace nts
 {
     class ClockComponent : public nts::AComponent
