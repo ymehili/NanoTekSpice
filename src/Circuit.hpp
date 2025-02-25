@@ -54,7 +54,7 @@ class Circuit {
         std::shared_ptr<nts::IComponent>& getComponent(const std::string& name) {
             auto it = components.find(name);
             if (it == components.end())
-                throw std::invalid_argument("Component not found: " + name);
+                return components[""];
             return it->second;
         }
 
@@ -73,8 +73,6 @@ class Circuit {
                 inputComponent->setValue(nts::Tristate::False);
             else if (value == 1)
                 inputComponent->setValue(nts::Tristate::True);
-            else
-                throw std::invalid_argument("Invalid input value: " + std::to_string(value));
         }
 
         void simulate() {
