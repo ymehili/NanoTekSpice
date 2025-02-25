@@ -38,12 +38,12 @@ namespace nts
     private:
         Tristate computeOR(std::size_t pin1, std::size_t pin2)
         {
-            Tristate input1 = _links[pin1 - 1].first ? _links[pin1 - 1].first->compute(_links[pin1 - 1].second) : Tristate::Undefined;
-            Tristate input2 = _links[pin2 - 1].first ? _links[pin2 - 1].first->compute(_links[pin2 - 1].second) : Tristate::Undefined;
+            Tristate a = _links[pin1 - 1].first ? _links[pin1 - 1].first->compute(_links[pin1 - 1].second) : Tristate::Undefined;
+            Tristate b = _links[pin2 - 1].first ? _links[pin2 - 1].first->compute(_links[pin2 - 1].second) : Tristate::Undefined;
 
-            if (input1 == Tristate::True || input2 == Tristate::True)
+            if (a == Tristate::True || b == Tristate::True)
                 return Tristate::True;
-            if (input1 == Tristate::Undefined || input2 == Tristate::Undefined)
+            if (a == Tristate::Undefined || b == Tristate::Undefined)
                 return Tristate::Undefined;
             return Tristate::False;
         }
