@@ -11,18 +11,28 @@
 void Circuit::start()
 {
     std::string command;
-    while (true)
+    while (std::cout << "> " && std::getline(std::cin, command))
     {
-        std::cout << "> ";
-        std::getline(std::cin, command);
-
         if (command == "exit")
+        {
             break;
+        }
         else if (command == "simulate")
+        {
             simulate();
+        }
         else if (command == "display")
+        {
             display();
-        else
+        }
+        else if (!command.empty())
+        {
             _buffer.push_back(command);
+        }
+    }
+
+    if (std::cin.eof())
+    {
+        std::cout << std::endl;
     }
 }

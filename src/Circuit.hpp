@@ -22,7 +22,7 @@
 
 class Circuit {
     public:
-        Circuit() {
+        Circuit(): _tick(0) {
             factories["input"] = []() { return std::make_shared<nts::InputComponent>(); };
             factories["output"] = []() { return std::make_shared<nts::OutputComponent>(); };
             factories["true"] = []() { return std::make_shared<nts::TrueComponent>(); };
