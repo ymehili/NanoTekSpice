@@ -19,6 +19,7 @@
 #include "SpecialComponents/include.hpp"
 #include "ElementaryComponents/include.hpp"
 #include "GatesComponents/include.hpp"
+#include "AdvancedComponents/include.hpp"
 
 class Circuit {
     public:
@@ -37,6 +38,8 @@ class Circuit {
             factories["4001"] = []() { return std::make_shared<nts::C4001>(); };
             factories["4030"] = []() { return std::make_shared<nts::C4030>(); };
             factories["4071"] = []() { return std::make_shared<nts::C4071>(); };
+
+            factories["4008"] = []() { return std::make_shared<nts::C4008>(); };
         }
 
         std::shared_ptr<nts::IComponent>& createComponent(const std::string& type, const std::string& name) {
