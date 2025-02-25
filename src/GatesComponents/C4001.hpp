@@ -42,12 +42,10 @@ namespace nts
 
             Tristate input2 = _links[pin2 - 1].first ? _links[pin2 - 1].first->compute(_links[pin2 - 1].second) : Tristate::Undefined;
 
+            if (input1 == Tristate::True || input2 == Tristate::True)
+                    return Tristate::False;
             if (input1 == Tristate::Undefined || input2 == Tristate::Undefined)
                 return Tristate::Undefined;
-
-            if (input1 == Tristate::True || input2 == Tristate::True)
-                return Tristate::False;
-
             return Tristate::True;
         }
     };
