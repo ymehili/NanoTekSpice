@@ -8,8 +8,8 @@
 #ifndef INCLUDEGATES_HPP_
 #define INCLUDEGATES_HPP_
 
-#include "C4001.hpp"
-#include "C4030.hpp"
-#include "C4071.hpp"
+#include "C4001_nor.hpp"
+#include "C4030_xor.hpp"
+#include "C4071_or.hpp"
 
 #endif /* !INCLUDEGATES_HPP_ */

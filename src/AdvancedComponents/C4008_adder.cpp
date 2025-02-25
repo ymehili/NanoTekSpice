@@ -5,7 +5,7 @@
 ** C4008
 */
 
-#include "include/C4008.hpp"
+#include "include/C4008_adder.hpp"
 
 namespace nts
 {
