@@ -23,7 +23,7 @@ namespace nts {
                 Tristate b = _links[1].first ? _links[1].first->compute(_links[1].second) : Tristate::Undefined;
                 if (a == Tristate::True || b == Tristate::True)
                     return Tristate::True;
-                if (a == Tristate::Undefined && b == Tristate::Undefined)
+                if (a == Tristate::Undefined || b == Tristate::Undefined)
                     return Tristate::Undefined;
                 return Tristate::False;
             }

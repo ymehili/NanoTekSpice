@@ -21,11 +21,11 @@ namespace nts {
                     return Tristate::Undefined;
                 Tristate a = _links[0].first ? _links[0].first->compute(_links[0].second) : Tristate::Undefined;
                 Tristate b = _links[1].first ? _links[1].first->compute(_links[1].second) : Tristate::Undefined;
-                if (a == Tristate::True && b == Tristate::True)
-                    return Tristate::True;
+                if (a == Tristate::False || b == Tristate::False)
+                    return Tristate::False;
                 if (a == Tristate::Undefined || b == Tristate::Undefined)
                     return Tristate::Undefined;
-                return Tristate::False;
+                return Tristate::True;
             }
     };
 }
