@@ -51,7 +51,7 @@ std::vector<Token> Parser::tokenize(std::ifstream& file)
             }
             else if (std::isalpha(c) || std::isdigit(c)) {
                 std::string identifier;
-                while (i < line.size() && (std::isalpha(line[i]) || std::isdigit(line[i]))) {
+                while (i < line.size() && line[i] != ' ' && line[i] != '\n' && line[i] != '\t' && line[i] != ':') {
                     identifier += line[i];
                     i++;
                 }
@@ -80,12 +80,15 @@ void Parser::parse(Circuit& circuit)
 {
     std::size_t i = 0;
 
+    while (tokens[i].type != DOTCHIPSETS && tokens[i].type != END)
+        i++;
+
     if (tokens[i].type != DOTCHIPSETS && tokens[i++].type != NEWLINE)
         throw std::runtime_error("Error: Expected .chipsets");
 
     i++;
 
-    for (i = 2; i < tokens.size() && tokens[i + 1].type != DOTLINKS; i++) {
+    for (; i < tokens.size() && tokens[i + 1].type != DOTLINKS; i++) {
         if (tokens[i].type == STRING || tokens[i].type == INTEGER) {
             std::string type = tokens[i].value;
             i++;
