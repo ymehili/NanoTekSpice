@@ -29,35 +29,36 @@ namespace nts
         if (pin < 10 || pin > 14)
             return Tristate::Undefined;
 
-        Tristate a1 = _links[6].first ? _links[6].first->compute(_links[6].second) : Tristate::Undefined;
-        Tristate a2 = _links[4].first ? _links[4].first->compute(_links[4].second) : Tristate::Undefined;
-        Tristate a3 = _links[2].first ? _links[2].first->compute(_links[2].second) : Tristate::Undefined;
-        Tristate a4 = _links[0].first ? _links[0].first->compute(_links[0].second) : Tristate::Undefined;
+        Tristate a1 = _links[7 - 1].first ? _links[7 - 1].first->compute(_links[7 - 1].second) : Tristate::Undefined;
+        Tristate a2 = _links[5 - 1].first ? _links[5 - 1].first->compute(_links[5 - 1].second) : Tristate::Undefined;
+        Tristate a3 = _links[3 - 1].first ? _links[3 - 1].first->compute(_links[3 - 1].second) : Tristate::Undefined;
+        Tristate a4 = _links[1 - 1].first ? _links[1 - 1].first->compute(_links[1 - 1].second) : Tristate::Undefined;
 
-        Tristate b1 = _links[5].first ? _links[5].first->compute(_links[5].second) : Tristate::Undefined;
-        Tristate b2 = _links[3].first ? _links[3].first->compute(_links[3].second) : Tristate::Undefined;
-        Tristate b3 = _links[1].first ? _links[1].first->compute(_links[1].second) : Tristate::Undefined;
-        Tristate b4 = _links[14].first ? _links[14].first->compute(_links[14].second) : Tristate::Undefined;
+        Tristate b1 = _links[6 - 1].first ? _links[6 - 1].first->compute(_links[6 - 1].second) : Tristate::Undefined;
+        Tristate b2 = _links[4 - 1].first ? _links[4 - 1].first->compute(_links[4 - 1].second) : Tristate::Undefined;
+        Tristate b3 = _links[2 - 1].first ? _links[2 - 1].first->compute(_links[2 - 1].second) : Tristate::Undefined;
+        Tristate b4 = _links[15 - 1].first ? _links[15 - 1].first->compute(_links[15 - 1].second) : Tristate::Undefined;
 
-        Tristate c0 = _links[8].first ? _links[8].first->compute(_links[8].second) : Tristate::Undefined;
+        Tristate in_c = _links[9 - 1].first ? _links[9 - 1].first->compute(_links[9 - 1].second) : Tristate::Undefined;
 
-        auto [o1, c1] = add(a1, b1, c0);
-        auto [o2, c2] = add(a2, b2, c1);
-        auto [o3, c3] = add(a3, b3, c2);
-        auto [o4, c4] = add(a4, b4, c3);
+        auto [o0, c0] = add(a1, b1, in_c);
+        auto [o1, c1] = add(a2, b2, c0);
+        auto [o2, c2] = add(a3, b3, c1);
+        auto [o3, out_c] = add(a4, b4, c2);
 
         switch (pin)
         {
         case 10:
-            return o1;
+            return o0;
         case 11:
-            return o2;
+            return o1;
         case 12:
-            return o3;
+            return o2;
         case 13:
-            return o4;
+            return o3;
         case 14:
-            return c4;
+            return out_c;
         }
+        return Tristate::Undefined;
     }
 }
