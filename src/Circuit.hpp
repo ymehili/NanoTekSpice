@@ -116,7 +116,7 @@ class Circuit {
             for (const auto& pair : components) {
                 auto* inputComponent = dynamic_cast<nts::InputComponent*>(pair.second.get());
                 if (inputComponent) {
-                    std::cout << "\t" << pair.first << ": ";
+                    std::cout << "  " << pair.first << ": ";
                     if (inputComponent->compute() == nts::Tristate::True)
                         std::cout << "1";
                     else if (inputComponent->compute() == nts::Tristate::False)
@@ -127,7 +127,7 @@ class Circuit {
                 }
                 auto *clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
                 if (clockComponent) {
-                    std::cout << "\t" << pair.first << ": ";
+                    std::cout << "  " << pair.first << ": ";
                     if (clockComponent->compute() == nts::Tristate::True)
                         std::cout << "1";
                     else if (clockComponent->compute() == nts::Tristate::False)
@@ -142,7 +142,7 @@ class Circuit {
                 auto* outputComponent = dynamic_cast<nts::OutputComponent*>(pair.second.get());
                 if (outputComponent) {
                     nts::Tristate value = pair.second->compute(1);
-                    std::cout << "\t" << pair.first << ": ";
+                    std::cout << "  " << pair.first << ": ";
                     if (value == nts::Tristate::True)
                         std::cout << "1";
                     else if (value == nts::Tristate::False)
