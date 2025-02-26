@@ -11,5 +11,6 @@
 #include "C4001_nor.hpp"
 #include "C4030_xor.hpp"
 #include "C4071_or.hpp"
+#include "C4081_and.hpp"
 
 #endif /* !INCLUDEGATES_HPP_ */
