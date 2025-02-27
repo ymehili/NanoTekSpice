@@ -43,6 +43,7 @@ class Circuit {
             factories["4017"] = []() { return std::make_shared<nts::C4017>(); };
             factories["4094"] = []() { return std::make_shared<nts::C4094>(); };
             factories["4514"] = []() { return std::make_shared<nts::C4514>(); };
+            factories["4040"] = []() { return std::make_shared<nts::C4040>(); };
         }
 
         std::shared_ptr<nts::IComponent>& createComponent(const std::string& type, const std::string& name) {
