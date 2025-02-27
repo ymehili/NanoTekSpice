@@ -48,5 +48,6 @@ namespace nts
         case 12:
             return (_counter >= 5) ? Tristate::True : Tristate::False;
         }
+        return Tristate::Undefined;
     }
 }
