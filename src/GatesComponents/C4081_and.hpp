@@ -33,6 +33,7 @@ namespace nts {
             }
         }
 
+    private:
         Tristate computeAND(std::size_t pin1, std::size_t pin2)
         {
             Tristate a = _links[pin1 - 1].first ? _links[pin1 - 1].first->compute(_links[pin1 - 1].second) : Tristate::Undefined;
