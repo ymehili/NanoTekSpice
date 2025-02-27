@@ -51,5 +51,6 @@ namespace nts
             case 10:
                 return enable;
         }
+        return Tristate::Undefined;
     }
 }

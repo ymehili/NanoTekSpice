@@ -38,7 +38,6 @@ class Circuit {
             factories["4001"] = []() { return std::make_shared<nts::C4001>(); };
             factories["4030"] = []() { return std::make_shared<nts::C4030>(); };
             factories["4071"] = []() { return std::make_shared<nts::C4071>(); };
-            factories["4081"] = []() { return std::make_shared<nts::C4081>(); };
 
             factories["4008"] = []() { return std::make_shared<nts::C4008>(); };
             factories["4017"] = []() { return std::make_shared<nts::C4017>(); };
