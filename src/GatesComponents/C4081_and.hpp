@@ -13,6 +13,7 @@
 namespace nts {
     class C4081 : public AComponent
     {
+    public:
         C4081() : AComponent(14) {}
         ~C4081() = default;
 
