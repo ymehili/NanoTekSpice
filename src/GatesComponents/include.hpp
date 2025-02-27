@@ -9,9 +9,10 @@
 #define INCLUDEGATES_HPP_
 
 #include "C4001_nor.hpp"
+#include "C4011_nand.hpp"
 #include "C4030_xor.hpp"
+#include "C4069_not.hpp"
 #include "C4071_or.hpp"
 #include "C4081_and.hpp"
-#include "C4069_not.hpp"
 
 #endif /* !INCLUDEGATES_HPP_ */
