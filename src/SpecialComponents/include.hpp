@@ -12,5 +12,6 @@
 #include "InputComponent.hpp"
 #include "OutputComponent.hpp"
 #include "TrueComponent.hpp"
+#include "LoggerComponent.hpp"
 
 #endif /* !INCLUDE_HPP_ */

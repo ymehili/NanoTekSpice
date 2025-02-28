@@ -29,6 +29,7 @@ class Circuit {
             factories["true"] = []() { return std::make_shared<nts::TrueComponent>(); };
             factories["false"] = []() { return std::make_shared<nts::FalseComponent>(); };
             factories["clock"] = []() { return std::make_shared<nts::ClockComponent>(); };
+            factories["logger"] = []() { return std::make_shared<nts::LoggerComponent>(); };
 
             factories["and"] = []() { return std::make_shared<nts::AndComponent>(); };
             factories["or"] = []() { return std::make_shared<nts::OrComponent>(); };
@@ -90,6 +91,9 @@ class Circuit {
                 auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
                 if (clockComponent)
                     clockComponent->simulate();
+                auto* loggerComponent = dynamic_cast<nts::LoggerComponent*>(pair.second.get());
+                if (loggerComponent)
+                    loggerComponent->simulate();
             }
             for (auto &command : _buffer) {
                 std::istringstream iss(command);
