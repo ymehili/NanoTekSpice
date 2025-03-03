@@ -7,3 +7,5 @@ nanotekspice
 .vscode/launch.json
 .vscode/tasks.json
 .obj
+tests
+vangelis

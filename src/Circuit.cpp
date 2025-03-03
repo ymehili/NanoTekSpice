@@ -7,32 +7,36 @@
 
 #include "Circuit.hpp"
 #include <iostream>
+#include <unistd.h>
 
 void Circuit::start()
 {
     std::string command;
-    while (std::cout << "> " && std::getline(std::cin, command))
+    bool istty = isatty(STDIN_FILENO);
+
+    while (true)
     {
-        if (command == "exit")
-        {
+        std::cout << "> ";
+        std::cout.flush();
+
+        if (!std::getline(std::cin, command)) {
+            if (istty) {
+                std::cout << std::endl;
+            }
             break;
         }
-        else if (command == "simulate")
-        {
-            simulate();
-        }
-        else if (command == "display")
-        {
-            display();
-        }
-        else if (!command.empty())
-        {
-            _buffer.push_back(command);
-        }
-    }
 
-    if (std::cin.eof())
-    {
-        std::cout << std::endl;
+        try {
+            if (command == "exit")
+                break;
+            else if (command == "simulate")
+                simulate();
+            else if (command == "display")
+                display();
+            else if (!command.empty())
+                _buffer.push_back(command);
+        } catch (const std::exception& e) {
+            std::cerr << e.what() << std::endl;
+        }
     }
 }

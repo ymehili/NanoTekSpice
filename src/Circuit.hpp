@@ -53,10 +53,10 @@ class Circuit {
         std::shared_ptr<nts::IComponent>& createComponent(const std::string& type, const std::string& name) {
             auto it = factories.find(type);
             if (it == factories.end())
-                throw std::invalid_argument("Unknown component type: " + type);
+                throw std::runtime_error("Unknown component type: " + type);
 
             if (components.find(name) != components.end())
-                throw std::invalid_argument("Component name already exists: " + name);
+                throw std::runtime_error("Component name already exists: " + name);
 
             components[name] = it->second();
             return components[name];
@@ -65,15 +65,23 @@ class Circuit {
         std::shared_ptr<nts::IComponent>& getComponent(const std::string& name) {
             auto it = components.find(name);
             if (it == components.end())
-                return components[""];
+                throw std::runtime_error("Component not found: " + name);
             return it->second;
         }
 
         void connect(const std::string& name1, const int pin1, const std::string& name2, const int pin2) {
             auto& comp1 = getComponent(name1);
             auto& comp2 = getComponent(name2);
-            comp1->setLink(pin1, *comp2, pin2);
-            comp2->setLink(pin2, *comp1, pin1);
+            
+            if (!comp1 || !comp2)
+                throw std::runtime_error("Cannot connect: component not found");
+                
+            try {
+                comp1->setLink(pin1, *comp2, pin2);
+                comp2->setLink(pin2, *comp1, pin1);
+            } catch (const std::exception& e) {
+                throw std::runtime_error(std::string("Connection error: ") + e.what());
+            }
         }
 
         void setInputValue(std::string name, int value) {
@@ -87,80 +95,102 @@ class Circuit {
         }
 
         void simulate() {
-            for (auto& pair : components) {
-                auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
-                if (clockComponent)
-                    clockComponent->simulate();
-                auto* loggerComponent = dynamic_cast<nts::LoggerComponent*>(pair.second.get());
-                if (loggerComponent)
-                    loggerComponent->simulate();
-            }
-            for (auto &command : _buffer) {
-                std::istringstream iss(command);
-                std::string cmd;
-                iss >> cmd;
-
-                std::string name;
-                std::string value;
-                size_t pos = command.find('=');
-                if (pos != std::string::npos) {
-                    name = command.substr(0, pos);
-                    value = command.substr(pos + 1);
-                }
-                auto* inputComponent = dynamic_cast<nts::InputComponent*>(getComponent(name).get());
-                if (inputComponent)
-                    inputComponent->setValue(value == "1" ? nts::Tristate::True : nts::Tristate::False);
-                else{
-                    auto* clockComponent = dynamic_cast<nts::ClockComponent*>(getComponent(name).get());
+            try {
+                for (auto& pair : components) {
+                    auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
                     if (clockComponent)
-                        clockComponent->setValue(value == "1" ? nts::Tristate::True : nts::Tristate::False);
+                        clockComponent->simulate();
+                    auto* loggerComponent = dynamic_cast<nts::LoggerComponent*>(pair.second.get());
+                    if (loggerComponent)
+                        loggerComponent->simulate();
                 }
+                for (auto &command : _buffer) {
+                    std::istringstream iss(command);
+                    std::string cmd;
+                    iss >> cmd;
+
+                    std::string name;
+                    std::string value;
+                    size_t pos = command.find('=');
+                    if (pos != std::string::npos) {
+                        name = command.substr(0, pos);
+                        value = command.substr(pos + 1);
+                    }
+                    
+                    if (name.empty() || value.empty()) {
+                        throw std::runtime_error("Invalid command format: " + command);
+                    }
+                    
+                    auto* inputComponent = dynamic_cast<nts::InputComponent*>(getComponent(name).get());
+                    if (inputComponent) {
+                        if (value != "0" && value != "1" && value != "U") {
+                            throw std::runtime_error("Invalid value for input: " + value);
+                        }
+                        inputComponent->setValue(value == "1" ? nts::Tristate::True : value == "0" ? nts::Tristate::False : nts::Tristate::Undefined);
+                    } else {
+                        auto* clockComponent = dynamic_cast<nts::ClockComponent*>(getComponent(name).get());
+                        if (clockComponent) {
+                            if (value != "0" && value != "1") {
+                                throw std::runtime_error("Invalid value for clock: " + value);
+                            }
+                            clockComponent->setValue(value == "1" ? nts::Tristate::True : nts::Tristate::False);
+                        } else {
+                            throw std::runtime_error("Component not found or not an input/clock: " + name);
+                        }
+                    }
+                }
+                _buffer.clear();
+                _tick++;
+            } catch (const std::exception& e) {
+                throw std::runtime_error(std::string("Simulation error: ") + e.what());
             }
-            _buffer.clear();
-            _tick++;
         }
 
         void display() {
-            std::cout << "tick: " << _tick << std::endl;
-            std::cout << "input(s):" << std::endl;
-            for (const auto& pair : components) {
-                auto* inputComponent = dynamic_cast<nts::InputComponent*>(pair.second.get());
-                if (inputComponent) {
-                    std::cout << "  " << pair.first << ": ";
-                    if (inputComponent->compute() == nts::Tristate::True)
-                        std::cout << "1";
-                    else if (inputComponent->compute() == nts::Tristate::False)
-                        std::cout << "0";
-                    else
-                        std::cout << "U";
-                    std::cout << std::endl;
+            try {
+                std::cout << "tick: " << _tick << std::endl;
+                std::cout << "input(s):" << std::endl;
+                for (const auto& pair : components) {
+                    auto* inputComponent = dynamic_cast<nts::InputComponent*>(pair.second.get());
+                    if (inputComponent) {
+                        std::cout << "  " << pair.first << ": ";
+                        if (inputComponent->compute() == nts::Tristate::True)
+                            std::cout << "1";
+                        else if (inputComponent->compute() == nts::Tristate::False)
+                            std::cout << "0";
+                        else
+                            std::cout << "U";
+                        std::cout << std::endl;
+                    }
+                    auto *clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
+                    if (clockComponent) {
+                        std::cout << "  " << pair.first << ": ";
+                        if (clockComponent->compute() == nts::Tristate::True)
+                            std::cout << "1";
+                        else if (clockComponent->compute() == nts::Tristate::False)
+                            std::cout << "0";
+                        else
+                            std::cout << "U";
+                        std::cout << std::endl;
+                    }
                 }
-                auto *clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
-                if (clockComponent) {
-                    std::cout << "  " << pair.first << ": ";
-                    if (clockComponent->compute() == nts::Tristate::True)
-                        std::cout << "1";
-                    else if (clockComponent->compute() == nts::Tristate::False)
-                        std::cout << "0";
-                    else
-                        std::cout << "U";
-                    std::cout << std::endl;
+                std::cout << "output(s):" << std::endl;
+                for (const auto& pair : components) {
+                    auto* outputComponent = dynamic_cast<nts::OutputComponent*>(pair.second.get());
+                    if (outputComponent) {
+                        nts::Tristate value = pair.second->compute(1);
+                        std::cout << "  " << pair.first << ": ";
+                        if (value == nts::Tristate::True)
+                            std::cout << "1";
+                        else if (value == nts::Tristate::False)
+                            std::cout << "0";
+                        else
+                            std::cout << "U";
+                        std::cout << std::endl;
+                    }
                 }
-            }
-            std::cout << "output(s):" << std::endl;
-            for (const auto& pair : components) {
-                auto* outputComponent = dynamic_cast<nts::OutputComponent*>(pair.second.get());
-                if (outputComponent) {
-                    nts::Tristate value = pair.second->compute(1);
-                    std::cout << "  " << pair.first << ": ";
-                    if (value == nts::Tristate::True)
-                        std::cout << "1";
-                    else if (value == nts::Tristate::False)
-                        std::cout << "0";
-                    else
-                        std::cout << "U";
-                    std::cout << std::endl;
-                }
+            } catch (const std::exception& e) {
+                throw std::runtime_error(std::string("Display error: ") + e.what());
             }
         }
 

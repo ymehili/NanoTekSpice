@@ -47,7 +47,7 @@ std::vector<Token> Parser::tokenize(std::ifstream& file)
                 else if (keyword == "links")
                     tokens.push_back({DOTLINKS, keyword, lineNumber});
                 else
-                    std::cerr << "Error: Unexpected keyword at line " << lineNumber << " : " << keyword << std::endl;
+                    throw std::runtime_error("Error: Unexpected keyword at line " + std::to_string(lineNumber) + " : " + keyword);
             }
             else if (std::isalpha(c) || std::isdigit(c)) {
                 std::string identifier;
@@ -66,7 +66,7 @@ std::vector<Token> Parser::tokenize(std::ifstream& file)
             else if (c == EOF)
                 tokens.push_back({END, "EOF", lineNumber});
             else if (c != '\n')
-                std::cerr << "Error: Unexpected character at line " << lineNumber << std::endl;
+                throw std::runtime_error("Error: Unexpected character at line " + std::to_string(lineNumber));
         }
         if (addNewline && !line.empty()) {
             tokens.push_back({NEWLINE, "\n", lineNumber});

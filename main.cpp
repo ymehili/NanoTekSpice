@@ -18,7 +18,7 @@ int main(int ac, char **av)
 {
     if (ac != 2) {
         std::cerr << "Usage: " << av[0] << " <filename>" << std::endl;
-        return 1;
+        return 84;
     }
 
     try {
@@ -28,7 +28,7 @@ int main(int ac, char **av)
         circuit.start();
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
-        return 1;
+        return 84;
     }
 
     return 0;
