@@ -72,10 +72,10 @@ class Circuit {
         void connect(const std::string& name1, const int pin1, const std::string& name2, const int pin2) {
             auto& comp1 = getComponent(name1);
             auto& comp2 = getComponent(name2);
-            
+
             if (!comp1 || !comp2)
                 throw std::runtime_error("Cannot connect: component not found");
-                
+
             try {
                 comp1->setLink(pin1, *comp2, pin2);
                 comp2->setLink(pin2, *comp1, pin1);
@@ -116,11 +116,11 @@ class Circuit {
                         name = command.substr(0, pos);
                         value = command.substr(pos + 1);
                     }
-                    
+
                     if (name.empty() || value.empty()) {
                         throw std::runtime_error("Invalid command format: " + command);
                     }
-                    
+
                     auto* inputComponent = dynamic_cast<nts::InputComponent*>(getComponent(name).get());
                     if (inputComponent) {
                         if (value != "0" && value != "1" && value != "U") {
@@ -130,10 +130,10 @@ class Circuit {
                     } else {
                         auto* clockComponent = dynamic_cast<nts::ClockComponent*>(getComponent(name).get());
                         if (clockComponent) {
-                            if (value != "0" && value != "1") {
+                            if (value != "0" && value != "1" && value != "U") {
                                 throw std::runtime_error("Invalid value for clock: " + value);
                             }
-                            clockComponent->setValue(value == "1" ? nts::Tristate::True : nts::Tristate::False);
+                            clockComponent->setValue(value == "1" ? nts::Tristate::True : value == "0" ? nts::Tristate::False : nts::Tristate::Undefined);
                         } else {
                             throw std::runtime_error("Component not found or not an input/clock: " + name);
                         }
