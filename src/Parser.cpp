@@ -51,7 +51,7 @@ std::vector<Token> Parser::tokenize(std::ifstream& file)
             }
             else if (std::isalpha(c) || std::isdigit(c)) {
                 std::string identifier;
-                while (i < line.size() && line[i] != ' ' && line[i] != '\n' && line[i] != '\t' && line[i] != ':') {
+                while (i < line.size() && line[i] != ' ' && line[i] != '\n' && line[i] != '\t' && line[i] != ':' && line[i] != '#') {
                     identifier += line[i];
                     i++;
                 }
