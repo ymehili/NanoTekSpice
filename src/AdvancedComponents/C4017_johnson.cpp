@@ -46,7 +46,7 @@ namespace nts
         case 11:
             return (_counter == 9) ? Tristate::True : Tristate::False;
         case 12:
-            return (_counter >= 5) ? Tristate::True : Tristate::False;
+            return (_counter >= 5) ? Tristate::False : Tristate::True;
         }
         return Tristate::Undefined;
     }
