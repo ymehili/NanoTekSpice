@@ -100,9 +100,6 @@ class Circuit {
                     auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
                     if (clockComponent)
                         clockComponent->simulate();
-                    auto* loggerComponent = dynamic_cast<nts::LoggerComponent*>(pair.second.get());
-                    if (loggerComponent)
-                        loggerComponent->simulate();
                 }
                 for (auto &command : _buffer) {
                     std::istringstream iss(command);
@@ -187,6 +184,10 @@ class Circuit {
                         else
                             std::cout << "U";
                         std::cout << std::endl;
+                    }
+                    auto* loggerComponent = dynamic_cast<nts::LoggerComponent*>(pair.second.get());
+                    if (loggerComponent){
+                        pair.second->compute(1);
                     }
                 }
             } catch (const std::exception& e) {
