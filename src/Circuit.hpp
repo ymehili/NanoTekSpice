@@ -50,6 +50,10 @@ class Circuit {
             factories["4040"] = []() { return std::make_shared<nts::C4040>(); };
         }
 
+        std::map<std::string, std::shared_ptr<nts::IComponent>>& getComponents() {
+            return components;
+        }
+
         std::shared_ptr<nts::IComponent>& createComponent(const std::string& type, const std::string& name) {
             auto it = factories.find(type);
             if (it == factories.end())

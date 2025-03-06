@@ -113,6 +113,9 @@ void Parser::parse(Circuit& circuit)
     if (tokens[i].type != DOTLINKS && tokens[i++].type != NEWLINE)
         throw std::runtime_error("Error: Expected .links");
 
+    if (circuit.getComponents().empty())
+        throw std::runtime_error("Error: No components");
+
     i++;
 
     for (i++; i < tokens.size() && tokens[i].type != END; i++) {
