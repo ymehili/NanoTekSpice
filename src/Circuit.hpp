@@ -95,6 +95,7 @@ class Circuit {
         }
 
         void simulate() {
+            _tick++;
             try {
                 for (auto& pair : components) {
                     auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
@@ -137,7 +138,6 @@ class Circuit {
                     }
                 }
                 _buffer.clear();
-                _tick++;
             } catch (const std::exception& e) {
                 throw std::runtime_error(std::string("Simulation error: ") + e.what());
             }
