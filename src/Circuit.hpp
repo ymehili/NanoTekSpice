@@ -50,6 +50,10 @@ class Circuit {
             factories["4040"] = []() { return std::make_shared<nts::C4040>(); };
         }
 
+        std::map<std::string, std::shared_ptr<nts::IComponent>>& getComponents() {
+            return components;
+        }
+
         std::shared_ptr<nts::IComponent>& createComponent(const std::string& type, const std::string& name) {
             auto it = factories.find(type);
             if (it == factories.end())
@@ -95,6 +99,7 @@ class Circuit {
         }
 
         void simulate() {
+            _tick++;
             try {
                 for (auto& pair : components) {
                     auto* clockComponent = dynamic_cast<nts::ClockComponent*>(pair.second.get());
@@ -140,7 +145,6 @@ class Circuit {
                     }
                 }
                 _buffer.clear();
-                _tick++;
             } catch (const std::exception& e) {
                 throw std::runtime_error(std::string("Simulation error: ") + e.what());
             }
