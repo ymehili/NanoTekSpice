@@ -27,25 +27,19 @@ namespace nts
         void simulate(std::size_t pin = 1)
         {
             (void)pin;
-            return;
-        }
-
-        Tristate compute(std::size_t pin = 1)
-        {
-            (void)pin;
             Tristate clock_state = _links[CLOCK_INDEX].first ? _links[CLOCK_INDEX].first->compute(_links[CLOCK_INDEX].second) : Tristate::Undefined;
             if (clock_state != Tristate::True) // if Undefined or False, do nothing
-                return clock_state;
+                return;
 
             Tristate inhibit = _links[INHIBIT_INDEX].first ? _links[INHIBIT_INDEX].first->compute(_links[INHIBIT_INDEX].second) : Tristate::Undefined;
             if (inhibit != Tristate::False) // if Undefined or True, do nothing (false = no inhibition -> we print)
-                return Tristate::False;
+                return;
 
             char character = 0;
             for (int i = 0; i < BYTE_INPUTS; i++){
                 Tristate bit_state = _links[i].first ? _links[i].first->compute(_links[i].second) : Tristate::Undefined;
                 if (bit_state == Tristate::Undefined)
-                    return bit_state;
+                    return;
                 if (bit_state == Tristate::True)
                     character |= (1 << i);
             }
@@ -57,7 +51,13 @@ namespace nts
             } else {
                 std::cerr << "Error: Unable to open log.bin for writing." << std::endl;
             }
-            return Tristate::True;
+            return;
+        }
+
+        Tristate compute(std::size_t pin = 1)
+        {
+            (void)pin;
+            return Tristate::Undefined;
         }
     };
 }
