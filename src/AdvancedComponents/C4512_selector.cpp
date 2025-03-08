@@ -60,7 +60,7 @@ namespace nts
             dataPin = 7;
             break;
         case 7:
-            dataPin = 9;
+            dataPin = 8;
             break;
         default:
             return Tristate::Undefined;
