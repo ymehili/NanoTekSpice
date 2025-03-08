@@ -21,6 +21,7 @@ namespace nts
                 if (pin == outputPins[i])
                     return Tristate::False;
             }
+            return Tristate::Undefined;
         }
 
         if (strobe == Tristate::True) {
