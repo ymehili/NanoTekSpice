@@ -18,7 +18,7 @@ namespace nts
         if (reset == Tristate::True)
             _counter = 0;
 
-        else if (in_1 == Tristate::True && _prev != Tristate::True && in_2 != Tristate::Undefined)
+        else if (in_1 == Tristate::True && _prev != Tristate::True && in_2 == Tristate::False)
             _counter = (_counter + 1) % 10;
 
         _prev = in_1;

@@ -16,9 +16,10 @@ namespace nts
 
         if (reset == Tristate::True)
             _counter = 0;
-
-        else if (_prevclock == Tristate::False && clock == Tristate::True)
-            _counter = (_counter + 1) & 0b111111111111;
+        else if (reset != Tristate::Undefined && clock != Tristate::Undefined) {
+            if (_prevclock == Tristate::True && clock == Tristate::False)
+                _counter = (_counter + 1) & 0xFFF;
+        }
 
         _prevclock = clock;
 
